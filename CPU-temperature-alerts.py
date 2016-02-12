@@ -246,17 +246,19 @@ while True:
                 core.actual_temp = float(f.readline()) / 1000
                 f.close()
 
+                titles = ["ALERTA! Temperatura elevada.","PELIGRO! Temperatura critica alcanzada."]
                 outputstring_title = None
 
                 if core.actual_temp >= core.max_temp and core.flag_core_temp is not True:
-                    os.system("notify-send 'Alerta, temperatura alta' 'Adapter = "+str(adapter.adapter_number)+"\nCore ="+core.label+"\nTemperature = "+str(core.actual_temp)+" degrees'")
+                    outputstring_title = titles[0];
                     core.flag_core_temp = True
 
                 if core.calculate_delta_T() >= core.deltaT_max and core.flag_core_deltatemp is not True:
-                    os.system("notify-send 'Warning!, temperature of porcessor increasing at high rate!' 'Adapter = "+str(adapter.adapter_number)+"\nCore ="+core.label+"\nTemperature = "+str(core.actual_temp)+" degrees'")
+                    outputstring_title = titles[1]
                     core.flag_core_deltatemp = True
 
-
+                if (core.flag_core_temp is True and core.counter_fct < 1) or (core.flag_core_deltatemp is True and core.counter_fcdt < 1):
+                    os.system("notify-send '"+outputstring_title+"' 'Adapter = "+str(adapter.adapter_number)+"\nCore ="+core.label+"\nTemperature = "+str(core.actual_temp)+" degrees'")
 
                 if core.flag_core_temp:
                     core.counter_fct += 1
